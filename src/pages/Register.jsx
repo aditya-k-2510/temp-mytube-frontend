@@ -70,7 +70,7 @@ function Register({ onSuccess }) {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <input type="file" onChange={(e) => setAvatar(e.target.files[0])} />
+        <input type="file" onChange={(e) => setAvatar(e.target.files[0])} /> {/* files is an array, we allow only 1 */}
         <input type="file" onChange={(e) => setCoverImage(e.target.files[0])} />
 
         <button className="primary" disabled={loading}>

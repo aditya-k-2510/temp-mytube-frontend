@@ -1,12 +1,12 @@
 import { useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
+import Profile from "./pages/Profile";
 import { useAuth } from "./auth/useAuth";
 
 function App() {
   const { user, setUser, loading } = useAuth();
-  const [authMode, setAuthMode] = useState("login"); // login | register
+  const [authMode, setAuthMode] = useState("login");
 
   if (loading) return <h2>Loading...</h2>;
 
@@ -19,24 +19,18 @@ function App() {
           <Register onSuccess={() => setAuthMode("login")} />
         )}
 
-        <p style={{ marginTop: "10px", textAlign: "center" }}>
+        <p style={{ marginTop: "10px" }}>
           {authMode === "login" ? (
             <>
               Don’t have an account?{" "}
-              <button
-                className="link"
-                onClick={() => setAuthMode("register")}
-              >
+              <button className="link" onClick={() => setAuthMode("register")}>
                 Register
               </button>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button
-                className="link"
-                onClick={() => setAuthMode("login")}
-              >
+              <button className="link" onClick={() => setAuthMode("login")}>
                 Login
               </button>
             </>
@@ -46,7 +40,7 @@ function App() {
     );
   }
 
-  return <Home user={user} onLogout={() => setUser(null)} />;
+  return <Profile user={user} setUser={setUser} />;
 }
 
 export default App;
