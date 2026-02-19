@@ -9,6 +9,8 @@ function VideoDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [likeLoading, setLikeLoading] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
+
 
   useEffect(() => {
     fetchVideo();
@@ -45,6 +47,23 @@ function VideoDetail() {
     }
   };
 
+  const handleSubscribeToggle = async () => {
+    setSubLoading(true);
+
+    try {
+        await apiFetch(`/subscription/c/${video.owner._id}`, {
+        method: "POST",
+        });
+
+        // Refetch video to update subscriberCount + isSubscribed
+        fetchVideo();
+    } catch (err) {
+        alert(err.message);
+    } finally {
+        setSubLoading(false);
+    }
+};
+
   if (loading) return <p>Loading video...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!video) return <p>Video not found</p>;
@@ -73,6 +92,24 @@ function VideoDetail() {
       >
         {likeLoading ? "Processing..." : "Like / Unlike"}
       </button>
+
+      <button
+        onClick={handleSubscribeToggle}
+        disabled={subLoading}
+        style={{
+            marginLeft: "20px",
+            padding: "6px 12px",
+            cursor: "pointer",
+        }}
+        >
+        {subLoading
+            ? "Processing..."
+            : video.owner.isSubscribed
+            ? "Unsubscribe"
+            : "Subscribe"}
+        </button>
+
+
 
       <hr />
 
