@@ -1,46 +1,52 @@
-import { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Profile from "./pages/Profile";
-import { useAuth } from "./auth/useAuth";
+import { useEffect, useState } from "react";
+import { apiFetch } from "./api/client";
 
 function App() {
-  const { user, setUser, loading } = useAuth();
-  const [authMode, setAuthMode] = useState("login");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (loading) return <h2>Loading...</h2>;
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await apiFetch("/users/profile");
+        setUser(res.data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!user) {
-    return (
-      <div className="container">
-        {authMode === "login" ? (
-          <Login onSuccess={(u) => setUser(u)} />
-        ) : (
-          <Register onSuccess={() => setAuthMode("login")} />
-        )}
+    fetchUser();
+  }, []);
 
-        <p style={{ marginTop: "10px" }}>
-          {authMode === "login" ? (
-            <>
-              Don’t have an account?{" "}
-              <button className="link" onClick={() => setAuthMode("register")}>
-                Register
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <button className="link" onClick={() => setAuthMode("login")}>
-                Login
-              </button>
-            </>
-          )}
-        </p>
-      </div>
-    );
-  }
+  if (loading) return <p>Loading...</p>;
 
-  return <Profile user={user} setUser={setUser} />;
+  return (
+    <Routes>
+      {user ? (
+        <>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/profile"
+            element={<Profile user={user} setUser={setUser} />}
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </>
+      ) : (
+        <>
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </>
+      )}
+    </Routes>
+  );
 }
 
 export default App;
