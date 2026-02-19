@@ -12,10 +12,20 @@ export async function apiFetch(path, options = {}) {
     ...options,
   });
 
-  const data = await response.json(); // backend now guarantees JSON
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("Server returned invalid response");
+  }
 
   if (!response.ok) {
-    throw new Error(data.message || "Something went wrong");
+    const errorMessage =
+      data?.message ||
+      data?.error ||
+      "Something went wrong";
+
+    throw new Error(errorMessage);
   }
 
   return data;
