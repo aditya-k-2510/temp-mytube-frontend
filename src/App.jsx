@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useEffect, useState } from "react";
 import { apiFetch } from "./api/client";
+import VideoDetail from "./pages/VideoDetail";
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -32,10 +34,8 @@ function App() {
       {user ? (
         <>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/profile"
-            element={<Profile user={user} setUser={setUser} />}
-          />
+          <Route path="/profile" element={<Profile user={user} setUser={setUser} />} />
+          <Route path="/video/:id" element={<VideoDetail />} />
           <Route path="*" element={<Navigate to="/" />} />
         </>
       ) : (
